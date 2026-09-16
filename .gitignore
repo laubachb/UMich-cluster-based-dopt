@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# Large regenerable products (keep summaries if desired)
+results/mode2/atom_errors.npz
+results/mode2/atom_errors.csv
+
+nitrogen/ChIMES-N_dataset.tar.gz
