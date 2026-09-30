@@ -1,0 +1,29 @@
+This file is best read without line wrapping.
+
+
+This is the dataset for the published ChIMES model with DOI:
+	+ https://doi.org/10.1063/5.0157238
+
+The published parameters are availble in these locations:
+
+	+ /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k/ALC-8/GEN-FF_ALC-5-rc_8-5-4-O_25-10-4/ params.txt.reduced
+	+ https://github.com/LindseyLab-umich/Unpublished_ChIMES_Models/blob/main/ChIMES-N/N.params.txt.reduced
+	+ Will be uploaded to chimes_calculator/serial_interface/force_fields
+
+The model was learned in 5 cycles. Here is the mapping between the data locations/file names. A more detailed overview of this data is given in the .xlsx file:
+
+	DFT.300K_1.0gcc.xyzf			--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/GEN_FF/300K_1.0gcc.xyzf 
+	DFT.2000K_1.0gcc.xyzf			--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/GEN_FF/2000K_1.0gcc.xyzf
+	DFT.5000K_2.0gcc.xyzf			--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/GEN_FF/5000K_2.0gcc.xyzf
+	DFT.6000K_2.5gcc.xyzf			--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/GEN_FF/6000K_2.5gcc.xyzf
+	DFT.7000K_3.1gcc.xyzf			--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/GEN_FF/7000K_3.1gcc.xyzf
+	DFT.8000K_4.5gcc.xyzf			--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/GEN_FF/8000K_4.5gcc.xyzf
+	ChIMES.fromALC-1.forALC-2.OUTCAR.xyzf	--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-1/VASP-20//OUTCAR.xyzf
+	ChIMES.fromALC-2.forALC-3.OUTCAR.xyzf	--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-2/VASP-20//OUTCAR.xyzf
+	ChIMES.fromALC-3.forALC-4.OUTCAR.xyzf	--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-3/VASP-20//OUTCAR.xyzf
+	ChIMES.fromALC-4.forALC-5.OUTCAR.xyzf	--> /p/lustre1/rlindsey/ChIMES_Nitrogen-210909/generate_models-DFTBref/al_2+3b-allPBE-AL-211227-no12k//ALC-4/VASP-20//OUTCAR.xyzf
+
+The .xyzf files follow the standard .xyz file format, with coordinate positions in Ang. There are additional
+columns at the end of each coordinate line giving the corresponding x, y, and z-force components in H/B. The 
+comment line gives the simulation cell a, b, and c lattice vectors in Ang, followed by the stress tensor in 
+GPa as sxx syy szz sxy sxz syz. The final line item is the overall system energy in kcal/mol
