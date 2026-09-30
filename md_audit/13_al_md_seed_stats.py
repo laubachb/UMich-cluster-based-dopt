@@ -78,7 +78,7 @@ def main():
                     r[f"diff_vs_{ref}"] = a.mean() - b.mean()
                     r[f"diff_vs_{ref}_lo95"], r[f"diff_vs_{ref}_hi95"] = boot_diff(a, b, rng)
             out.append(r)
-    out.append(dict(scope="base, 20 seeds", strategy="base", models=1, runs=len(base), events=int(base.event.sum()),
+    out.append(dict(scope="base, all seeds", strategy="base", models=1, runs=len(base), events=int(base.event.sum()),
                     rate=base.event.mean(), lo95=wilson(int(base.event.sum()), len(base))[0],
                     hi95=wilson(int(base.event.sum()), len(base))[1]))
     rules = pd.DataFrame(out)

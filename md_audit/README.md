@@ -339,29 +339,35 @@ state point (`work/al_md/base_seeds`). All 392 runs completed. Draft figure: `fi
 - *5000 K:* runs either conserve econserve to ~1 meV/atom (median 0.6) or show a collapse event: an N–N pair driven
   inside the 0.86 Å inner cutoff (down to 0.36 Å) with an econserve jump of 10²–10⁴ meV/atom.
 - *Seeds and control arm* (`08_al_step.py --random-sp 5000K_2.0gcc` adds `random_5000K`: uniform draws from the 5000 K
-  pool frames only; `11_al_md_setup.py ... --out balanced_seeds`; `13_al_md_seed_stats.py`). At 5000 K every γ-rule
-  model (5 draws × 5 K) and random draws 0–9 ran seeds 1–5, and `random_5000K` draws 0–9 ran seeds 1–5 (750 new runs,
-  all completed). Event rate pooled over K (95% Wilson), and difference to `random_5000K` with a 95% interval from a
-  bootstrap over models (a model's seeds move together):
+  pool frames only; `11_al_md_setup.py ... --out balanced_seeds`; `13_al_md_seed_stats.py`). At 5000 K every rule has
+  10 models per K, each run at seeds 1–5 (50 runs per point): γ rules = MaxVol draws 0–9 (draws 5–9 from
+  `08_al_step.py --n-maxvol 10 --out-tag _mv10`, which reproduces draws 0–4 exactly), random and `random_5000K` = draws
+  0–9. The base model ran 40 seeds. All 1,185 runs at 5000 K completed. Event rate pooled over K (95% Wilson), and
+  difference to `random_5000K` with a 95% interval from a bootstrap over models (a model's seeds move together):
 
   | Rule | Events / runs | Rate | vs random 5000 K only |
   |---|---|---|---|
-  | base (20 seeds) | 6 / 20 | 0.30 [0.15, 0.52] | |
-  | γ_bulk | 56 / 125 | 0.45 [0.36, 0.54] | +0.29 [0.20, 0.38] |
+  | base (40 seeds) | 13 / 40 | 0.33 [0.20, 0.48] | |
+  | γ_bulk | 112 / 250 | 0.45 [0.39, 0.51] | +0.29 [0.21, 0.37] |
   | random | 77 / 250 | 0.31 [0.25, 0.37] | +0.15 [0.07, 0.23] |
   | random, 5000 K only | 39 / 250 | 0.16 [0.12, 0.21] | |
-  | γ_cluster | 7 / 125 | 0.06 [0.03, 0.11] | −0.10 [−0.17, −0.04] |
-  | γ_cluster, round-robin | 12 / 125 | 0.10 [0.06, 0.16] | −0.06 [−0.14, +0.02] |
+  | γ_cluster | 12 / 250 | 0.05 [0.03, 0.08] | −0.11 [−0.17, −0.05] |
+  | γ_cluster, round-robin | 25 / 250 | 0.10 [0.07, 0.14] | −0.06 [−0.12, +0.01] |
 
-  At K ≤ 10, where every γ_cluster frame is a 5000 K frame: γ_cluster 2/75 = 0.03 against random 5000 K frames
-  31/150 = 0.21 (difference −0.18 [−0.26, −0.10]). At K = 40, where γ_cluster has moved on to 300/2000 K frames
-  (19 of 40 at 5000 K), its rate is 5/25 = 0.20 against 5/50 = 0.10 for random 5000 K frames. So adding 5000 K data
-  reduces collapses, and the 5000 K frames γ_cluster ranks highest reduce them about as much again, per frame.
+  At K ≤ 10, where every γ_cluster frame is a 5000 K frame: γ_cluster 3/150 = 0.02 against random 5000 K frames
+  31/150 = 0.21 (difference −0.19 [−0.27, −0.11]). γ_cluster's rate rises slowly with K (0.00, 0.02, 0.04, 0.06, 0.12
+  at K = 2–40) as its selection moves on to 300/2000 K frames; at K = 40 it is 6/50 = 0.12 against 5/50 = 0.10 for
+  random 5000 K frames. So adding 5000 K data reduces collapses, and the 5000 K frames γ_cluster ranks highest reduce
+  them about as much again, per frame. Round-robin is not distinguishable from γ_cluster or from the control: its
+  K = 2 models collapse at 0.26, then 0.02–0.10.
+  Filesystem note: with ~50–100 runs starting at once on /work2, LAMMPS occasionally read a truncated data.in or an
+  empty in.lammps; `slurm/run_al_md.cmd` now counts a run as done only if its log has "Loop time" and retries otherwise.
+  Six base seeds and three refit runs were rerun on the spr partition (same LAMMPS build).
   The force error shows the same crossover: at K = 10, 5000 K RMSE 1.166 (γ_cluster) vs 1.186 (random 5000 K); at
   K = 40, 1.118 vs 1.090. Figures: `fig6C_md_stability.png` (event rate vs K; 300 K packing), `figS_md_econs_strip.png`
   (per-run excursions, seed 1).
-- *Caveat:* 10 ps per run catches early failures only; 5 MD seeds × 5 MaxVol draws per γ-rule point are 25 runs from
-  5 models, so intervals come from the model-level bootstrap, not the run count.
+- *Caveat:* 10 ps per run catches early failures only; each point is 50 runs from 10 models, so intervals come from
+  the model-level bootstrap, not the run count.
 
 ## 9. Caveats
 
