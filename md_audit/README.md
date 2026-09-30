@@ -1,12 +1,16 @@
-# MD audit: do bulk and cluster-local γ find a real MLIP's errors in its own MD? (Fig. 6)
+# MD audit: do bulk and cluster-local γ find a real MLIP's errors in its own MD?
 
-This directory holds the study behind Fig. 6 of the manuscript. It tests the retrospective result
+This directory holds the MD part of the study. It tests the retrospective result
 (`../retrospective/`) on a trained ChIMES-N model running its own molecular dynamics:
 
 1. **Flagging.** When the model runs its own MD, do bulk γ and cluster γ (γ_bulk, γ_cluster) point at the atoms and frames
    where it is actually wrong? "Wrong" means the per-atom force error against new DFT single points.
 2. **Active learning.** If DFT frames from that MD are chosen by γ_bulk, by γ_cluster or at random, added to the
    training set and refit, which choice lowers held-out error fastest, and in which regime?
+3. **Stability.** Are the refit models stable when they run their own MD, judged by the conserved quantity of
+   Langevin dynamics and by short-range collapse (§8b)?
+4. **Switch rule and early warning.** Does using γ_cluster only in clusters the bulk basis under-represents keep the
+   best of both grades, and does γ rise before a collapse (§8c)?
 
 All numbers below are read from the tracked result files listed in the [file map](#file-map-and-reproduction).
 
@@ -27,6 +31,14 @@ All numbers below are read from the tracked result files listed in the [file map
   This has a price in the 42-parameter model: the first 5–10 γ_cluster frames make 300 K and 2000 K error *worse*, and
   error on 30 held-out DFT frames rises by 0.025 eV/Å. γ_bulk puts its budget almost entirely into 2000 K frames and
   performs about the same as random there.
+- **Stability (§8b).** At 5000 K the refit models collapse (N–N pairs inside the inner cutoff, jump of the conserved
+  quantity) in 5% of 10 ps runs for γ_cluster, 10% for round-robin, 16% for random 5000 K frames, 31% for random,
+  45% for γ_bulk and 33% for the base model (50 runs per rule and K, 1,185 runs). At 300 K nothing collapses, but the
+  base model over-condenses the liquid until molecular frames are added.
+- **Switch rule (§8c).** The same three molecular clusters are under-represented in this model's bulk basis. Grading
+  them with γ_cluster and the rest with γ_bulk matches γ_cluster at 5000 K (frame Spearman 0.47) and restores
+  γ_bulk's precise flags at 300 and 2000 K.
+- **No early warning (§8c).** No grade separates the frames just before a collapse from the rest (AUROC ≈ 0.5).
 - **Interpretation.** In real MD, bulk normalisation is blind to the regime the model reaches but was never trained to
   resolve internally (here the dissociating 5000 K fluid). Cluster-local γ finds that regime and fixes it fastest. It
   is not better everywhere, and a model with limited capacity pays for the added data in other regimes.
@@ -369,14 +381,47 @@ state point (`work/al_md/base_seeds`). All 392 runs completed. Draft figure: `fi
 - *Caveat:* 10 ps per run catches early failures only; each point is 50 runs from 10 models, so intervals come from
   the model-level bootstrap, not the run count.
 
+## 8c. Switch rule and early warning
+
+**Switch rule on the MD audit** (`14_hybrid_md.py` → `results/hybrid_md_{atom,frame,flags,representation}.csv`). For
+each of the 10 MaxVol solutions of step 3, the bulk basis of the DFT-only model's training set is recomputed with the
+same seed and call order and traced back to clusters. Clusters 0, 3 and 4 are under-represented in every solution
+(0.21–0.26 of their fair share of basis rows; cluster 5 falls below 1 in one solution). Results:
+
+| | 300 K | 2000 K | 5000 K |
+|---|---|---|---|
+| Frame Spearman: γ_bulk / γ_cluster / switch | 0.20 / 0.21 / 0.21 | 0.17 / 0.23 / 0.23 | 0.08 / 0.47 / 0.47 |
+| Atom Spearman: γ_bulk / γ_cluster / switch | 0.55 / 0.53 / 0.51 | 0.40 / 0.40 / 0.37 | 0.15 / 0.27 / 0.18 |
+
+Flags (γ > 1 in ≥ 80% of solutions) in well-represented clusters at 300 / 2000 K: switch = γ_bulk (30 / 55 atoms,
+precision 0.40 / 0.42) instead of γ_cluster's 543 / 518 atoms (0.27 / 0.39). In under-represented clusters at 5000 K:
+switch = γ_cluster (288 atoms, precision 0.59) instead of γ_bulk's 1. The switch is therefore a flagging rule; as a
+continuous atom-level ranking it is slightly worse than either grade alone. max(γ_bulk, γ_cluster) behaves like
+γ_cluster.
+
+**Early warning** (`15_early_warning.py`, `slurm/run_early_warning.cmd` → `results/early_warning_*.csv`). The base
+model's 40 seeds at 5000 K (13 with a collapse event). Every second saved frame before the event (40 fs apart; 8,249
+frames) is re-described with chimes_lsq (two MD-audit frames included as a check: max relative deviation < 5e-17) and
+graded with γ_bulk, γ_cluster and the switch rule (5 MaxVol solutions, max over the 64 atoms of a frame).
+
+- Hazard AUROC (frames within Δ ps before an event vs all other pre-event frames and all frames of stable runs,
+  bootstrap over runs): 0.49–0.54 for every grade and Δ = 0.2, 0.5, 1, 2 ps; every 95% interval includes 0.5.
+- Alarms at the 95th / 99th percentile of stable runs catch 10–11 / 5–6 of 13 events in their last picosecond, but
+  fire about 1.2 / 0.25 times per ps in runs that never collapse.
+
+γ therefore does not anticipate the collapse. The stability benefit of §8b comes from the data γ_cluster selects for
+the refit, not from detecting instabilities as they develop.
+
 ## 9. Caveats
 
 - There is one base model (DFT-only, 42 parameters), one system, one held-out seed and one DFT test set. The
   bootstrap intervals are over frames of the same runs.
-- MaxVol variability is included (10 solutions for flagging, 5 for active learning), but the clustering itself is a
-  single seed with k = 6 (the paper's).
+- MaxVol variability is included (10 solutions for flagging, 5–10 for active learning). The clustering is k = 6 with
+  one seed; `../retrospective/08_cluster_sensitivity.py` shows the 5000 K frame ranking holds for k = 4–8 and three
+  seeds (0.30–0.53 vs 0.08 for γ_bulk).
 - The active-learning step is a single iteration with ranking fixed against the base set. It is not a multi-cycle
-  campaign, and the refit models were not rerun in MD.
+  campaign. The refit models were run in MD (§8b) for 10 ps each; extra MD seeds were run at 5000 K only.
+- The switch rule (§8c) has been scored but not used as a selection rule in the active-learning step.
 - The t3 models' MD (300 and 2000 K) has γ but no DFT labels. It was run so their flag rates can be compared
   (`flag_summary.csv`).
 - Frame t = 0 of every run is a DFT frame and was excluded from labelling and analysis.
@@ -418,6 +463,8 @@ first, because the MD atoms are assigned to the retrospective clusters and grade
 | MD | `sbatch slurm/run_al_md.cmd` | `work/al_md/balanced/*/{log.lammps,traj.lammpstrj}` | `LMP_CHIMES` |
 | 12 | `12_al_md_analysis.py balanced` (also `base_seeds`, `balanced_seeds`) | `results/al_md_stability*.csv` | MD |
 | 13 | `13_al_md_seed_stats.py` | `results/al_md_seed_stats_{by_k,rules}.csv` | step 12 (all three run sets) |
+| 14 | `14_hybrid_md.py` | `results/hybrid_md_{atom,frame,flags,representation}.csv` | steps 3, 6 |
+| 15 | `15_early_warning.py prep`, then `slurm/run_early_warning.cmd` (stages descriptors, gamma, analysis) | `work/early_warning/`, `results/early_warning_{frames,hazard,alarm,profile}.csv` | step 12 (`base_seeds`), `CHIMES_LSQ` |
 
 From the tracked data only, run steps 2, 3 and 6–9 (`slurm/run_analysis.cmd`). The MD and DFT steps regenerate the
 tracked data. LAMMPS runs with the same seeds are not guaranteed to be bitwise identical across machines or MPI
