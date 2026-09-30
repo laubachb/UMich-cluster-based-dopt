@@ -1,0 +1,8 @@
+# Versions used to produce the manuscript results (Python 3.12.11). Spectral clustering, UMAP and the
+# gradient-boosting regressors can change with library versions; use these to reproduce the numbers exactly.
+numpy==2.4.1
+scipy==1.17.0
+pandas==2.3.3
+scikit-learn==1.8.0
+matplotlib==3.10.8
+umap-learn==0.5.12

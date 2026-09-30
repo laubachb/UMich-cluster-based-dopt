@@ -1,11 +1,20 @@
+# Python
 __pycache__/
 *.py[cod]
 .pytest_cache/
 *.egg-info/
 .DS_Store
 
-# Large regenerable products (keep summaries if desired)
-results/mode2/atom_errors.npz
-results/mode2/atom_errors.csv
+# Not part of the reproducible pipeline:
+#   archive/             exploratory analyses, superseded pipelines, raw run outputs
+#   manuscript_figures/  local working copy of the manuscript (figure copies + LaTeX drafts)
+archive/
+manuscript_figures/
 
-nitrogen/ChIMES-N_dataset.tar.gz
+# Built tools and local configuration (written by install/install_chimes.sh)
+external/
+env.sh
+
+# Large regenerable intermediates (design matrices, labels, gamma arrays, MD and DFT run directories)
+retrospective/work/
+md_audit/work/
