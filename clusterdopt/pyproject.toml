@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clusterdopt"
+version = "0.1.0"
+description = "Cluster-local D-optimal (MaxVol) extrapolation grades for linear machine-learned interatomic potentials"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Benjamin R. Laubach" }, { name = "Rebecca K. Lindsey" }]
+dependencies = ["numpy>=1.22", "scipy>=1.8", "scikit-learn>=1.2"]
+
+[project.urls]
+Homepage = "https://github.com/laubachb/UMich-cluster-based-dopt"
+Documentation = "https://github.com/laubachb/UMich-cluster-based-dopt/blob/main/clusterdopt/docs/user_guide.md"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+clusterdopt = "clusterdopt.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
