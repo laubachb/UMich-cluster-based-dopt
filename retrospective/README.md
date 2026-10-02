@@ -13,7 +13,7 @@ have DFT forces, so the grades can be compared with a model's true force error w
 ## Pipeline
 
 Run from the repository root. Intermediates go to `retrospective/work/` (git-ignored); the small tables behind the
-figures go to `retrospective/results/` (tracked); figures go to `figures/`.
+figures go to `retrospective/results/` (not tracked; rebuilt by the scripts); figures go to `figures/`.
 
 | Step | Script | What it does | Needs | Time |
 |---|---|---|---|---|

@@ -64,18 +64,21 @@ fixes the neglected regime fastest, including suppressing short-range collapse i
 common/          shared code: MaxVol + gamma + ranking metrics (dopt.py), paths and tool lookup (paths.py), file readers
 data/            published ChIMES nitrogen dataset (xyzf, 6 MB) + provenance and DFT-protocol notes
 install/         install_chimes.sh: clones and builds chimes_lsq, chimes_calculator and LAMMPS+chimesFF at pinned commits
-retrospective/   scripts 01-08, fm_setup.in, results/ (tracked tables), slurm/ (example drivers)
+retrospective/   scripts 01-08, fm_setup.in, results/ (tables written by the scripts), slurm/ (example drivers)
 md_audit/        scripts 00-15, models/, data/ (MD frames + DFT forces), dft_calib/, results/, slurm/
 common/chimes_params.py  reads/writes the coefficients of a ChIMES params.txt (refit models for MD)
-figures/         first-version figures (matplotlib) from retrospective/06_figures.py and md_audit/09_figures.py
+clusterdopt/     installable Python package of the method for general use (see clusterdopt/README.md)
+figures/         git-ignored output of retrospective/06_figures.py and md_audit/09_figures.py (first-version figures)
 requirements.txt pinned Python packages
 ```
 
-The manuscript's final figures are drawn from the tracked result tables; `figures/` holds the first matplotlib versions
-and is not updated for the later analyses (steps 07–08 and 10–15), whose numbers are in the `results/` tables.
+The manuscript's final figures are drawn from the result tables; `figures/` (not tracked) receives the first
+matplotlib versions and is not updated for the later analyses (steps 07–08 and 10–15), whose numbers are in the `results/` tables.
 
 `*/work/` directories hold large regenerable intermediates (design matrices, cluster labels, γ arrays, MD and DFT run
-directories) and are git-ignored.
+directories) and are git-ignored. Result tables in `*/results/` are written by the scripts and are not tracked, except
+the tables of runs that cannot be repeated exactly or cheaply: the MD stability and early-warning tables
+(`md_audit/results/al_md_*.csv`, `early_warning_*.csv`, from ~1,540 LAMMPS runs) and `dft_calibration.csv` (VASP).
 
 ## Installation
 
