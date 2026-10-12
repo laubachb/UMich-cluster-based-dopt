@@ -36,8 +36,9 @@ All numbers below are read from the tracked result files listed in the [file map
   45% for γ_bulk and 33% for the base model (50 runs per rule and K, 1,185 runs). At 300 K nothing collapses, but the
   base model over-condenses the liquid until molecular frames are added.
 - **Switch rule (§8c).** The same three molecular clusters are under-represented in this model's bulk basis. Grading
-  them with γ_cluster and the rest with γ_bulk matches γ_cluster at 5000 K (frame Spearman 0.47) and restores
-  γ_bulk's precise flags at 300 and 2000 K.
+  them with γ_cluster and the rest with γ_bulk matches γ_cluster at 5000 K (frame Spearman 0.47). At 300 and 2000 K
+  most atoms are in those clusters, so the switch inherits γ_cluster's permissive threshold (300 K precision 0.17 vs
+  0.47 for γ_bulk); it recovers γ_bulk's flags only in the well-represented clusters.
 - **No early warning (§8c).** No grade separates the frames just before a collapse from the rest (AUROC ≈ 0.5).
 - **Interpretation.** In real MD, bulk normalisation is blind to the regime the model reaches but was never trained to
   resolve internally (here the dissociating 5000 K fluid). Cluster-local γ finds that regime and fixes it fastest. It
@@ -395,7 +396,10 @@ same seed and call order and traced back to clusters. Clusters 0, 3 and 4 are un
 
 Flags (γ > 1 in ≥ 80% of solutions) in well-represented clusters at 300 / 2000 K: switch = γ_bulk (30 / 55 atoms,
 precision 0.40 / 0.42) instead of γ_cluster's 543 / 518 atoms (0.27 / 0.39). In under-represented clusters at 5000 K:
-switch = γ_cluster (288 atoms, precision 0.59) instead of γ_bulk's 1. The switch is therefore a flagging rule; as a
+switch = γ_cluster (288 atoms, precision 0.59) instead of γ_bulk's 1. Over all atoms at 300 / 2000 K, however, the
+switch flags 6,312 / 8,513 atoms at precision 0.17 / 0.11 (γ_bulk: 607 / 707 at 0.47 / 0.15), because most molecular
+MD atoms are in the under-represented clusters; the switch chooses the grade per cluster but does not fix γ_cluster's
+threshold there. As a
 continuous atom-level ranking it is slightly worse than either grade alone. max(γ_bulk, γ_cluster) behaves like
 γ_cluster.
 
@@ -464,6 +468,19 @@ first, because the MD atoms are assigned to the retrospective clusters and grade
 | 12 | `12_al_md_analysis.py balanced` (also `base_seeds`, `balanced_seeds`) | `results/al_md_stability*.csv` | MD |
 | 13 | `13_al_md_seed_stats.py` | `results/al_md_seed_stats_{by_k,rules}.csv` | step 12 (all three run sets) |
 | 14 | `14_hybrid_md.py` | `results/hybrid_md_{atom,frame,flags,representation}.csv` | steps 3, 6 |
+| 15 | `15_early_warning.py` | `results/early_warning_*.csv` | base-model MD |
+| 16–19 | `16_si_analysis.py`, `17_cluster_threshold.py`, `18_al_step_per_statepoint.py`, `19_flagged_atom_geometry.py` | SI tables: thermostat check, calibrated per-cluster thresholds, budget divided among state points, geometry of the flagged 5000 K atoms | steps 3, 6, 10 |
+| 20 | `20_label_partitions.py` | test R1/R2 on the MD: grades with state-point / density / phase groups, leverage; `results/label_partitions_md_*.csv`, `results/al_step_label_partitions.csv` | steps 3, 6, 10 |
+| 21 | `21_al_step_leverage.py` | test R3: one AL iteration selected by leverage; `results/al_step_leverage*.csv`, `work/al_models/leverage/coefs.npz` | step 10 |
+| 22 | `22_min_rule.py` | test M2: minimum over cluster / state-point bases; `results/min_rule_md_*.csv`, `results/al_step_min_rule.csv` | steps 3, 6 |
+| 23 | `23_info_gain.py` | test H: IG_hom / IG_het / IG_hier and noise-weighted MaxVol on the MD; `results/info_gain_md_frame.csv`, `results/al_step_info_gain.csv` | step 20 |
+| 24 | `24_advance.py` | test N: soft membership, partition ensemble, per-cluster conformal calibration; `results/advance_md_*.csv`, `results/al_step_advance.csv` | steps 3, 6, 10 |
+| 25 | `25_info_gain_statepoint.py` | RWV with state-point groups (descriptive); `results/info_gain_statepoint_frame.csv` | step 20 |
+| 26 | `26_soft_coefs.py` | refit coefficients of the soft-membership selection for the stability run `soft_seeds`; `work/al_models/soft/coefs.npz` | step 24 |
+| MD | `slurm/run_al_md_dev.cmd` (`-N 4`, `SPLIT=leverage_seeds` or `soft_seeds`) | multi-node skx-dev launcher for the stability run sets of tests S and N; sets `LMP_OVERRIDE` to a verified build (the build in `env.sh` was removed on 2026-10-05; the override reproduces the manuscript runs step for step) | `11_al_md_setup.py <split> --seeds 1..50 --sp 5000K_2.0gcc --select <rule>:1 --out <split>_seeds` |
+
+Tests R–X are pre-registered in `../open_systems/CRITERIA.md`; the nitrogen criteria scored by these scripts are in
+`results/*criteria*.csv`.
 | 15 | `15_early_warning.py prep`, then `slurm/run_early_warning.cmd` (stages descriptors, gamma, analysis) | `work/early_warning/`, `results/early_warning_{frames,hazard,alarm,profile}.csv` | step 12 (`base_seeds`), `CHIMES_LSQ` |
 
 From the tracked data only, run steps 2, 3 and 6–9 (`slurm/run_analysis.cmd`). The MD and DFT steps regenerate the

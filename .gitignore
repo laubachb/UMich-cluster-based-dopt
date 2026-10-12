@@ -32,3 +32,11 @@ md_audit/results/*
 !md_audit/results/al_md_seed_stats_*.csv
 !md_audit/results/early_warning_*.csv
 !md_audit/results/dft_calibration.csv
+
+# Open-data extension (open_systems/): downloaded data, design matrices, per-scenario tables
+open_systems/work/
+open_systems/results/*
+!open_systems/results/*.csv
+
+# Manuscript export dropped in the root by the user; the working copy lives in manuscript_figures/ (ignored)
+Overleaf Projects*.zip

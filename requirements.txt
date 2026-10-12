@@ -6,3 +6,6 @@ pandas==2.3.3
 scikit-learn==1.8.0
 matplotlib==3.10.8
 umap-learn==0.5.12
+# Added for the open-data and robustness tests (open_systems/, 2026-10): persistent homology for test T, and ase
+# (any recent version) only to read the water dataset's pickle in open_systems/01_prepare.py water.
+ripser==0.6.15

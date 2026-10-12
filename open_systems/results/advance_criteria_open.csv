@@ -1,0 +1,7 @@
+name,criterion,value,passed,detail
+si_gap18,N3b coverage,0.8797120710932418,True,"mean coverage 0.880 (pooled quantile 0.881), n=36"
+sio2,N3b coverage,0.9443930498317941,True,"mean coverage 0.944 (pooled quantile 0.937), n=19"
+water,N3b coverage,0.9249795483441828,True,"mean coverage 0.925 (pooled quantile 0.923), n=6"
+pooled,N1 soft vs min,-0.020261428491506493,False,"-0.020 [-0.027, -0.014], n=61"
+pooled,N1 soft vs cluster,0.011109361500435845,True,"+0.011 [+0.008, +0.015], n=61"
+pooled,"N4 candidate (largest gain over gamma_cluster, within-regime ranking)",0.06504096824911239,,"gamma_soft +0.011, gamma_cal +0.065 -> gamma_cal"

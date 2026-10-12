@@ -1,0 +1,6 @@
+criterion,comparator,value,passed,detail
+V1,h_bulk,0.0244118705917015,True,"RWV - h_bulk +0.024 [+0.021, +0.028], n=192; per element Cu +0.035, Ge +0.014, Li +0.024, Mo +0.031, Ni +0.033, Si +0.019"
+V2,gamma_regime,0.049163081032807664,True,"RWV - gamma_regime +0.049 [+0.036, +0.065], n=192; per element Cu +0.106, Ge +0.027, Li +0.049, Mo +0.023, Ni +0.085, Si +0.037"
+V3,gamma_min_regime,0.06478565993852319,True,"RWV - gamma_min_regime +0.065 [+0.056, +0.074], n=192; per element Cu +0.098, Ge +0.030, Li +0.079, Mo +0.089, Ni +0.106, Si +0.029"
+V4,gamma_bulk,0.08754867200323979,True,"RWV - gamma_bulk +0.088 [+0.075, +0.101], n=192; per element Cu +0.145, Ge +0.047, Li +0.102, Mo +0.108, Ni +0.143, Si +0.039"
+(descriptive) IG_hom - h_bulk,h_bulk,0.014941983888465836,,"+0.015 [+0.013, +0.017]"

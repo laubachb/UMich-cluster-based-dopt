@@ -16,7 +16,7 @@
 module load intel/24.0 impi/21.11
 export I_MPI_PIN=off OMP_NUM_THREADS=1
 source env.sh                        # sets LMP_CHIMES (written by install/install_chimes.sh)
-LMP=$LMP_CHIMES
+LMP=${LMP_OVERRIDE:-$LMP_CHIMES}   # LMP_OVERRIDE: another build of the same LAMMPS + chimesFF (run_al_md_dev.cmd)
 SPLIT=${SPLIT:-balanced}
 JOBS=${JOBS:-jobs.txt}          # jobs_added.txt = only the runs added by the last 11_al_md_setup.py call
 cd md_audit/work/al_md/$SPLIT
@@ -32,7 +32,7 @@ worker() {
   for d in "$@"; do
     ( cd "$d" || exit
       for a in 1 2 3; do
-        taskset -c "$core" mpirun -np 1 "$LMP" -in in.lammps -log log.lammps > stdout.txt 2>&1
+        taskset -c "$core" mpirun -np 1 ${LOCAL_MPI_HOST:+-hosts $(hostname -s)} "$LMP" -in in.lammps -log log.lammps > stdout.txt 2>&1
         grep -q "^Loop time" log.lammps 2>/dev/null && { echo "OK $d"; exit; }
         grep -q "Unexpected end of data file\|^Total wall time" stdout.txt || break   # a real LAMMPS error: stop
         sleep $((5 * a))

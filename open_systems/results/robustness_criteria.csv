@@ -1,0 +1,13 @@
+name,criterion,value,passed,detail
+si_gap18,R2-1,0.06484758568800733,False,"mean AUROC h_bulk 0.790 vs gamma_bulk 0.725, n=36"
+si_gap18,R2-2,0.011405359765406195,False,"Delta(h_regime - h_bulk) 0.011 [-0.002, 0.023]"
+si_gap18,R2-3,0.025935862585748017,True,Delta gamma_regime 0.037 vs Delta h_regime 0.011
+sio2,R2-1,0.14814921273461593,False,"mean AUROC h_bulk 0.837 vs gamma_bulk 0.689, n=19"
+sio2,R2-2,-0.04531862001882986,False,"Delta(h_regime - h_bulk) -0.045 [-0.079, -0.014]"
+sio2,R2-3,0.13409406052160386,False,Delta gamma_regime 0.089 vs Delta h_regime -0.045
+sio2,(descriptive) h_element,0.003261789436171795,,"Delta(h_element - h_bulk) 0.003 [-0.001, 0.007]; Delta gamma_element -0.007"
+water,R2-1,0.2834502042045243,False,"mean AUROC h_bulk 0.862 vs gamma_bulk 0.579, n=6"
+water,R2-2,0.006659494911407197,False,"Delta(h_regime - h_bulk) 0.007 [-0.022, 0.033]"
+water,R2-3,0.2561481996798143,False,Delta gamma_regime 0.263 vs Delta h_regime 0.007
+water,(descriptive) h_element,0.009324165094611073,,"Delta(h_element - h_bulk) 0.009 [0.008, 0.011]; Delta gamma_element -0.010"
+water,(descriptive) h_cluster,-0.024424352939862965,,"Delta(h_cluster - h_bulk) -0.024 [-0.030, -0.019]; Delta gamma_cluster 0.064"

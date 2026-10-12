@@ -2,7 +2,8 @@
 """Step 5: control arms for Figs. 3-5: which part of 'gamma_cluster + cluster label' carries the signal?
 Same data, MaxVol, gradient boosting and GroupKFold-by-frame protocol as 04_gamma_ensemble.py; 5 MaxVol solutions.
 Arms: raw scores (no model) and HGB on {bulk}, {cluster}, {ID}, {bulk,ID}, {cluster,ID}, {bulk,cluster,ID}.
-Metrics: pooled Spearman / AUROC@q90 (Fig. 3), within-cluster Spearman (Fig. 4), minority-cluster recall@10% (Fig. 5).
+Metrics: pooled Spearman / AUROC@q90 (Fig. 3), within-cluster Spearman and AUROC@q90 (Fig. 4), minority-cluster
+recall@10% (Fig. 5).
 Writes results/controls.csv (the control table of the manuscript).
 """
 import sys
@@ -57,6 +58,8 @@ def main():
                  "recall10_hidden": E.recall_curve(s[hid], info, np.array([0.10]))[0]}
             for c in np.unique(lch):
                 m = lch == c; r[f"sp_c{c}"] = E.spearman(s[m], y[m])
+            for c in np.unique(lch):
+                m = lch == c; r[f"au_c{c}"] = E.auroc_high_error(s[m], y[m])
             rows.append(r)
         print("trial", t, flush=True)
     df = pd.DataFrame(rows); out = RES / "controls.csv"

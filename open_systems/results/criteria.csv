@@ -1,0 +1,19 @@
+name,criterion,value,detail,passed
+si_gap18,C1,6.0,regimes with representation < 0.5 at f = 0.25,True
+si_gap18,C2,0.019981385170584266,mean Delta(regime) f=0.02 0.035 vs f=0.25 0.015,True
+si_gap18,C3,0.03734122235115421,"Delta(regime) at f<=0.05, rep<0.5: 0.037 [0.019, 0.055], n=36",True
+si_gap18,C4,-0.029650450036369465,"Delta(cluster) at f<=0.05, rep<0.5: -0.030 [-0.039, -0.020], n=36",False
+si_gap18,C5,-0.030311403855526452,"min over f of mean Delta(cluster) where rep>=1: f=0.02: -0.016, f=0.05: -0.030, f=0.1: -0.022, f=0.25: -0.017",True
+sio2,C1,3.0,regimes with representation < 0.5 at f = 0.25,True
+sio2,C2,0.006707543842505284,mean Delta(regime) f=0.02 0.072 vs f=0.25 0.065,True
+sio2,C3,0.088775440502774,"Delta(regime) at f<=0.05, rep<0.5: 0.089 [0.051, 0.126], n=19",True
+sio2,C4,-0.008056064484203193,"Delta(cluster) at f<=0.05, rep<0.5: -0.008 [-0.026, 0.011], n=19",False
+sio2,C7,-0.31872025918801256,"Spearman(A_R, Delta cluster) -0.319 [-0.538, -0.043], n=84; mean Delta A_R<0.5: 0.106 (n=7), A_R>=0.8: nan (n=0); A_R range 0.20-0.78",False
+sio2,C5,-0.020430478295289434,"min over f of mean Delta(cluster) where rep>=1: f=0.02: -0.010, f=0.05: 0.012, f=0.1: -0.020, f=0.25: -0.020",True
+water,C1,0.0,regimes with representation < 0.5 at f = 0.25,False
+water,C2,,mean Delta(regime) f=0.02 0.239 vs f=0.25 nan,False
+water,C3,0.2628076945912215,"Delta(regime) at f<=0.05, rep<0.5: 0.263 [0.224, 0.307], n=6",True
+water,C4,0.06433496462938938,"Delta(cluster) at f<=0.05, rep<0.5: 0.064 [0.028, 0.100], n=6",True
+water,C7,-0.5258687258687259,"Spearman(A_R, Delta cluster) -0.526 [-0.662, -0.288], n=36; mean Delta A_R<0.5: 0.061 (n=36), A_R>=0.8: nan (n=0); A_R range 0.14-0.39",False
+water,C5,0.025222432735659606,"min over f of mean Delta(cluster) where rep>=1: f=0.02: 0.025, f=0.05: 0.077, f=0.1: 0.067, f=0.25: 0.123",True
+sio2,C6,0.01668527777777784,"vacancy: rep 0.03, dCluster 0.017, dRegime 0.090, dElement -0.003",True

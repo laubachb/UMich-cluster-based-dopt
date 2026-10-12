@@ -26,8 +26,17 @@ figures go to `retrospective/results/` (not tracked; rebuilt by the scripts); fi
 | 7 | `07_raw_and_hybrid.py` | the 10 MaxVol solutions of step 4 (same seeds and call order) scored without a regressor: raw grades, cluster-label control, flag precision per cluster, representation of each cluster in the bulk basis, and hybrid grades including the switch rule → `results/{raw_pooled,raw_by_cluster,raw_recall,flag_precision,bulk_basis_representation}.csv`, `work/gamma_retro.npz` | – | ~5 min |
 | 8 | `08_cluster_sensitivity.py` | clustering redone for k = 4–8 × seeds 42, 0, 1; γ_cluster (5 solutions) scored on the manuscript's molecular candidates and on the 5000 K MD audit → `results/cluster_sensitivity.csv` | md_audit step 6 | ~15 min |
 
-`slurm/run_retrospective.cmd` runs steps 1–6 on one node, and `slurm/run_story_analyses.cmd` runs steps 7–8 together
-with `md_audit/14_hybrid_md.py` (TACC Stampede3 examples).
+| 9 | `09_recall_by_cluster.py` | recall curves per cluster (Fig. 6 of the manuscript) → `results/recall_by_cluster.csv` | step 7 | <1 min |
+| 10 | `10_transfer_protocols.py` | train/test protocols (held-out DFT-MD; ALC-2 added, tested on ALC-3 / ALC-4) → `results/transfer_by_cluster.csv` | step 7 | ~10 min |
+| 11 | `11_label_partitions.py` | tests R1/R2: bases per frame density / phase, leverage → `results/label_partitions_*.csv` | step 7 | ~10 min |
+| 12 | `12_min_rule.py` | test M1: minimum over cluster / density bases vs assignment → `results/min_rule_*.csv` | step 7 | ~5 min |
+| 13 | `13_info_gain.py` | test H1/H5: information gain with regime noise, partial pooling, noise-weighted MaxVol → `results/info_gain_*.csv` | step 7 | ~10 min |
+| 14 | `14_advance.py` | test N: soft membership, partition ensemble, conformal calibration on ALC-2 → ALC-3..5 → `results/advance_*.csv` | step 7 | ~30 min |
+| 15 | `15_tda_ceiling.py` | tests T2/X: clustering on the topological descriptor (`open_systems/15_tda_features.py --nitrogen`), k-NN error ceilings → `results/tda_ceiling_retro*.csv` | step 7, `work/tda.npy` | ~20 min |
+
+`slurm/run_retrospective.cmd` runs steps 1–6 on one node, `slurm/run_story_analyses.cmd` runs steps 7–8 together
+with `md_audit/14_hybrid_md.py`, and `slurm/run_controls.cmd` runs step 5 (TACC Stampede3 examples). Steps 11–15 are
+launched by the MODEs of `open_systems/slurm/robustness_dev.cmd`; their criteria are in `open_systems/CRITERIA.md`.
 
 ## Methods
 

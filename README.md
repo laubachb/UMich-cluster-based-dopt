@@ -26,6 +26,7 @@ This repository tests a simple alternative, the cluster-local grade γ_cluster:
 |---|---|---|
 | Retrospective | [`retrospective/`](retrospective/README.md) | On the original active-learning candidates (which have DFT forces), which grade flags and ranks the force error of a preliminary model? Is the gain the grade or the cluster label? Does it depend on the clustering? When should each grade be used? |
 | MD audit | [`md_audit/`](md_audit/README.md) | When a DFT-only ChIMES model runs its own MD (900 frames checked with new DFT), which grade finds its errors? Which frames improve it most when added, and are the refit models stable in MD? Does γ warn of an instability before it happens? |
+| Open data and robustness tests | [`open_systems/`](open_systems/README.md) | Does the result carry over to Si GAP-18, SiO₂ and water? Which of the standard grade, local D-optimal grades (ours and Shuang et al.'s), predictive variance and regime-weighted variance ranks error best, and why does the standard grade fail? Every test is pre-registered in [`open_systems/CRITERIA.md`](open_systems/CRITERIA.md). |
 
 ### Main findings
 
@@ -193,3 +194,45 @@ Checks built into or run alongside the pipeline:
 The nitrogen data are from the published ChIMES nitrogen model (Lindsey et al.,
 [doi:10.1063/5.0157238](https://doi.org/10.1063/5.0157238)); see [`data/README.md`](data/README.md). The MD frames
 and DFT forces in `md_audit/data/` were generated for this work.
+
+## Extensions of October 2026 (open data, prior work, robustness)
+
+After the nitrogen study, the method was tested on open datasets a reviewer could obtain and against the closest prior
+work (Shuang et al., arXiv 2508.03405, cluster-local D-optimality with a minimum over groups; Williams et al.,
+Comput. Mater. Sci. 2024, Bayesian predictive variance for SNAP). The short version, with the numbers in
+[`open_systems/README.md`](open_systems/README.md) and the criteria in [`open_systems/CRITERIA.md`](open_systems/CRITERIA.md):
+
+- A basis per regime beats the bulk grade on Si, SiO₂ and water when the regime is rare in training; the label-free
+  clustering finds the regimes only in molecular systems (nitrogen, water).
+- The bulk grade fails within regimes because it weights regimes with very different model error equally and keeps
+  only the extreme rows; the fit's own predictive variance does not have this problem and ranks within-regime error as
+  well as or better than any local D-optimal grade.
+- Regime-weighted variance (RWV) passed a pre-registered confirmation on six untouched mlearn systems against every
+  D-optimal variant and plain variance. Assignment to one group beats the minimum over groups when the groups are real
+  regimes. Per-cluster conformal calibration makes the local grade comparable across regimes (pooled Spearman 0.10 →
+  0.67 on nitrogen) with 88–93 % coverage at a 90 % target.
+- Selecting frames still needs a local reference: variance within the cluster gives a 5000 K collapse rate of 0.07
+  against 0.05 for γ_cluster, and bulk variance 0.14.
+
+Scripts: `open_systems/06–18`, `retrospective/09–15`, `md_audit/16–26`, launched by
+`open_systems/slurm/robustness_dev.cmd`. The scored criteria tables are tracked under `open_systems/results/*.csv`.
+
+## Transferring to another HPC
+
+The repository holds the code, the nitrogen data, the tracked result tables and the pre-registration. It does not hold:
+
+1. **Built tools.** Run `install/install_chimes.sh` on the new machine (Intel oneAPI compilers and MPI assumed by the
+   ChIMES build scripts); it writes `env.sh`. The LAMMPS build referenced by the Stampede3 `env.sh` was removed from its
+   original location on 2026-10-05; the stability launchers use `LMP_OVERRIDE` to point at another build of the same
+   LAMMPS + chimesFF commit, which was verified to reproduce the manuscript trajectories step for step.
+2. **Regenerable intermediates** (`*/work/`, several GB): design matrices from `chimes_lsq`, cluster labels, γ arrays,
+   MD and DFT run directories. Rebuild with the numbered scripts; the MD and DFT run sets are listed in
+   `md_audit/README.md` §8b and "File map".
+3. **Open data** and the Si GAP-18 / mlearn matrices: see "Transferring to another machine" in `open_systems/README.md`.
+4. **The manuscript** (`manuscript_figures/`, git-ignored; Overleaf export in the project root) and the archive of
+   exploratory analyses (`archive/`).
+5. **Slurm settings.** All drivers are written for TACC Stampede3 (account `TG-CHM250015`; partitions `skx-dev`,
+   `skx`, `spr`). Edit the `#SBATCH` lines; note that `sbatch --export` splits values on commas, so the drivers take
+   space-separated lists in quotes and `METHODS=soft+cal`.
+
+Python: `pip install -r requirements.txt` (adds `ripser` for the topological test; `ase` only to read the water pickle).
